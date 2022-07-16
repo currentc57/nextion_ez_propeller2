@@ -46,27 +46,28 @@ Differences between the Arduino library and this library
 - `pushCmdArg()`
 - `sendCmd()`
 - `addWave()`
-- `readNum()`
 - `readStr()` 
-- `readByte()`
+- `readNum()`
+- `listen()`
 - `cmdAvail()`
 - `getCmd()`
 - `getCmdLen()`
+- `readByte()`
 - `getCurrentPage()`
 - `getLastPage()`
 - `setCurrentPage()`
 - `setLastPage()`
 
-**NOTE** previous version had a `getSubCmd()` method that exactly duplicated the functionality of `readByte()`, it has been removed.  If you used `getSubCmd()` in your code, just replace it with `readByte()` 
+**NOTE** previous version had a `getSubCmd` method that exactly duplicated the functionality of `readByte`, it has been removed.  If you used `getSubCmd` in your code, just replace it with `readByte`  
 
 In order for the object to update the Id of the current page, you must write the Preinitialize Event of every page: `printh 23 02 50 XX` , where `XX` the id of the page in HEX.
 Your code can then read the current page and previous page using the `getCurrentPage()` and `getLastPage()` methods.
 
-Standard Easy Nextion Library commands are sent from the Nextion display with `printh 23 02 54 XX` , where `XX` is the id for the command in HEX.  
+Standard Easy Nextion Library commands are sent from the Nextion display with `printh 23 02 54 XX` , where HEX 02 is the number of bytes in the command, HEX 54 "T" is the command byte and `XX` is the second byte for the command in HEX.  Since this library leaves parsing the commands to user code, we are not limited to "T" as the first command byte unless trying to reused existing Arduino Easy Nextion HMI code. However "P" is reserved for the library to signal page changes.
 Your code should call the `listen()` method frequently to check for new commands from the display.  You can then use the `getAvail`, `getCmd()` and `getSubCmd` methods to parse any commands.
 
 example:
-```spin2
+```spin
 PUB main()
     nextion.listen()                        ' need to run this to check for incoming data from the Nextion
     if nextion.cmdAvail() > 0               ' has the nextion sent a command?
